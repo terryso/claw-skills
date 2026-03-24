@@ -1,0 +1,19 @@
+{
+  "name": "claw-skills",
+  "owner": {
+    "name": "nick"
+  },
+  "metadata": {
+    "description": "Collection of AI agent skills for Claude Code and OpenClaw"
+  },
+  "plugins": [
+    {
+      "name": "claw-skills",
+      "source": "./",
+      "description": "Skills for macOS automation (peekaboo-cli) and Polyv live streaming (polyv-live-cli)",
+      "homepage": "https://github.com/terryso/claw-skills",
+      "license": "MIT",
+      "keywords": ["claude-code", "openclaw", "skills", "automation", "macos", "peekaboo", "polyv"]
+    }
+  ]
+}

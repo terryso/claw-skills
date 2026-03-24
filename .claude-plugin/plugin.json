@@ -1,0 +1,7 @@
+{
+  "name": "claw-skills",
+  "version": "1.0.0",
+  "description": "Collection of AI agent skills for Claude Code and OpenClaw",
+  "skills": ["./skills/"],
+  "keywords": ["claude-code", "openclaw", "skills", "automation", "macos"]
+}
