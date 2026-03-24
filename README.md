@@ -2,6 +2,8 @@
 
 Collection of AI agent skills for Claude Code, OpenClaw, and other skill-compatible agents.
 
+[中文文档](README_CN.md)
+
 ## Installation
 
 ### Option 1: Claude Code Plugin Marketplace (Recommended)
@@ -55,7 +57,7 @@ macOS UI automation CLI tool for screen capture, window control, element clickin
 
 ### polyv-live-cli
 
-保利威直播服务管理工具，支持频道管理、推流操作、商品管理、优惠券等功能。
+Polyv live streaming service management tool with channel management, streaming operations, product management, coupons, and more.
 
 **Features:**
 - Channel management (频道管理)
@@ -74,11 +76,27 @@ macOS UI automation CLI tool for screen capture, window control, element clickin
 
 ---
 
+## Why Skills over MCP Server?
+
+| Feature | Skill | MCP Server |
+|---------|-------|------------|
+| Setup complexity | Simple (copy files) | Moderate (config) |
+| **Tools limit** | **No limit** | **IDE has tools quota** |
+| Tool access | CLI commands (unlimited) | Structured tools (limited) |
+| Flexibility | Full CLI power | Constrained by tool schema |
+
+**Key advantage:** MCP servers are limited by the IDE's maximum number of tools. Skills have no such limitation - they provide comprehensive documentation for unlimited CLI commands while consuming zero tool slots.
+
+For example, `peekaboo-cli` has 35+ commands. If each command were an MCP tool, it would consume significant quota. As a skill, it costs nothing.
+
+---
+
 ## Directory Structure
 
 ```
 claw-skills/
 ├── README.md
+├── README_CN.md
 ├── LICENSE
 ├── .claude-plugin/
 │   ├── marketplace.json
@@ -91,16 +109,6 @@ claw-skills/
         ├── SKILL.md
         └── references/
 ```
-
-## Skill vs MCP Server
-
-| Feature | Skill | MCP Server |
-|---------|-------|------------|
-| Setup complexity | Simple (copy files) | Moderate (config) |
-| Direct tool access | CLI commands | Structured tools |
-| Best for | CLI workflows | Complex integrations |
-
-Skills are recommended for most agent users. Use MCP servers if you need structured JSON schemas or multiple MCP clients.
 
 ## Contributing
 
