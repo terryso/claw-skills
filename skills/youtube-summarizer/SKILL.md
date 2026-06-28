@@ -58,46 +58,45 @@ python3 SKILL_DIR/scripts/fetch_transcript.py "URL" --text-only --timestamps | t
 
 ### Step 4: Generate Summary
 
-Analyze the transcript and produce a structured summary. Output format (template labels stay in English, content follows the chosen language):
+Analyze the transcript and produce a structured summary. **ALL content must be in the chosen language — including section labels, table headers, and metadata fields.** Only the template structure (emojis, table format, blockquote format) stays fixed. The actual words are all localized.
+
+Template structure (translate every label into the output language):
 
 ```
-## 📺 Video Summary
+## 📺 [localized: "视频总结" / "Video Summary" / etc.]
 
-**Title:** (from metadata)
-**Channel:** (from metadata)
-**Guest/Speaker:** (if identifiable from intro)
-**Duration:** (from metadata) | **Published:** (from metadata)
-
----
-
-### One-Line Summary
-(1-2 sentence overview of what the video is about)
+**[localized label]:** (title)
+**[localized label]:** (channel)
+**[localized label]:** (guest, if identifiable)
+**[localized label]:** (duration) | **[localized label]:** (date)
 
 ---
 
-### 🎯 Key Viewpoints
+### [localized: one-line summary]
+(1-2 sentence overview)
 
-| Topic | Viewpoint |
+---
+
+### 🎯 [localized: "核心观点" / "Key Viewpoints"]
+
+| [localized: 话题] | [localized: 观点] |
 |-------|-----------|
-| (topic 1) | (who said what) |
-| (topic 2) | (who said what) |
 | ... | ... |
 
 ---
 
-### 🔥 Notable Quotes
-> "Quote 1" — Speaker
-> "Quote 2" — Speaker
+### 🔥 [localized: "金句" / "Notable Quotes"]
+> "Original language quote" — Speaker
 
 ---
 
-### 📌 Other Highlights
-- Bullet points for interesting anecdotes, data, demos, or stories
+### 📌 [localized: "其他亮点" / "Other Highlights"]
+- ...
 
 ---
 
-### ⚠️ Notes / Bias
-- Mention any obvious biases, sponsor segments, or unverified claims
+### ⚠️ [localized: "注意/偏见" / "Notes / Bias"]
+- ...
 ```
 
 ### Output Language
@@ -105,11 +104,10 @@ Analyze the transcript and produce a structured summary. Output format (template
 The summary language is determined by this priority:
 
 1. **User explicitly specifies** (e.g. "用中文总结", "summarize in Japanese", "用英语总结") → use that language
-2. **User does not specify** → **default to 中文 (Chinese)** for all summary content
+2. **User does not specify** → **default to 中文 (Chinese)** for ALL content
 3. **Quotes** → always keep in the original spoken language (do not translate quotes)
-4. **Section labels** (`Key Viewpoints`, `Notable Quotes`, etc.) → always keep in English as shown in the template
-
-Supported languages: 中文 (default), English, 日本語, 한국어, Français, Deutsch, Español, or any language the user requests.
+4. **Section labels, table headers, metadata fields** → translate into the output language (中文 by default)
+5. **Only emojis and structural format** stay fixed across all languages
 
 ## Error Handling
 
@@ -120,6 +118,10 @@ Supported languages: 中文 (default), English, 日本語, 한국어, Français,
 | `No transcript found` | Retry without `--language` flag, then note actual language |
 | Empty output | Video may not have auto-generated subtitles; inform user |
 | `yt-dlp: command not found` | Install with `pip3 install yt-dlp` or `brew install yt-dlp` |
+
+## Reference Example
+
+See `references/example-output.md` for a real summary (GLM-5.2 interview video, Chinese output). Use it as the quality bar for structure, conciseness, and depth.
 
 ## Tips
 
