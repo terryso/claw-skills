@@ -58,7 +58,7 @@ python3 SKILL_DIR/scripts/fetch_transcript.py "URL" --text-only --timestamps | t
 
 ### Step 4: Generate Summary
 
-Analyze the transcript and produce a structured summary in the user's language. Default output format:
+Analyze the transcript and produce a structured summary. Output format (template labels stay in English, content follows the chosen language):
 
 ```
 ## 📺 Video Summary
@@ -102,10 +102,14 @@ Analyze the transcript and produce a structured summary in the user's language. 
 
 ### Output Language
 
-- Match the user's message language for the summary
-- Keep original language for quotes and transcript
-- If user writes in Chinese → output summary in Chinese
-- If user writes in English → output summary in English
+The summary language is determined by this priority:
+
+1. **User explicitly specifies** (e.g. "用中文总结", "summarize in Japanese", "用英语总结") → use that language
+2. **User does not specify** → **default to 中文 (Chinese)** for all summary content
+3. **Quotes** → always keep in the original spoken language (do not translate quotes)
+4. **Section labels** (`Key Viewpoints`, `Notable Quotes`, etc.) → always keep in English as shown in the template
+
+Supported languages: 中文 (default), English, 日本語, 한국어, Français, Deutsch, Español, or any language the user requests.
 
 ## Error Handling
 
@@ -122,4 +126,4 @@ Analyze the transcript and produce a structured summary in the user's language. 
 - **Speaker identification:** For interview/podcast videos, identify speakers from the intro and label viewpoints accordingly
 - **Sponsor segments:** Skip ad reads (common in tech videos) — note them in ⚠️ section
 - **Long videos (>1hr):** Process in chunks; the script outputs ~500-800 lines for a typical 1.5hr video
-- **Non-English videos:** The transcript will be in the video's language; summarize/translate per user request
+- **Non-English videos:** The transcript will be in the video's language; summarize in the output language per the rules above (default 中文)
