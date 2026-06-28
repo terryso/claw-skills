@@ -1,6 +1,6 @@
 ---
 name: youtube-summarizer
-slug: youtube-summarizer-user-9e3b7930
+slug: youtube-summarizer-cn
 displayName: YouTube 视频总结器
 version: 1.1.0
 summary: 下载 YouTube 字幕并生成结构化总结（核心观点/金句/亮点），默认中文输出，支持多语言
