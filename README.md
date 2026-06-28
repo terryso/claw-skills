@@ -76,6 +76,27 @@ Polyv live streaming service management tool with channel management, streaming 
 
 ---
 
+### youtube-summarizer
+
+Download YouTube video transcripts and generate structured summaries with key viewpoints, notable quotes, and topic analysis.
+
+**Features:**
+- Download subtitles/transcripts from any YouTube URL
+- Extract video metadata (title, channel, duration, upload date)
+- Generate structured summaries (key viewpoints, quotes, highlights)
+- Multi-language support (auto-detect or specify language)
+- Works with watch, youtu.be, shorts, embed, and live URLs
+
+**Usage:**
+```bash
+# In Claude Code with skill installed:
+"Summarize this video: https://youtube.com/watch?v=VIDEO_ID"
+"Download the transcript from https://youtu.be/VIDEO_ID"
+"总结这个视频: https://youtube.com/watch?v=VIDEO_ID"
+```
+
+---
+
 ## Why Skills over MCP Server?
 
 | Feature | Skill | MCP Server |
@@ -105,9 +126,13 @@ claw-skills/
     ├── peekaboo-cli/
     │   ├── SKILL.md
     │   └── references/
-    └── polyv-live-cli/
+    ├── polyv-live-cli/
+    │   ├── SKILL.md
+    │   └── references/
+    └── youtube-summarizer/
         ├── SKILL.md
-        └── references/
+        └── scripts/
+            └── fetch_transcript.py
 ```
 
 ## Contributing
