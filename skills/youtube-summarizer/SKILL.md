@@ -1,6 +1,11 @@
 ---
 name: youtube-summarizer
-description: Download YouTube video transcripts and generate structured summaries with key viewpoints. Use when the user shares a YouTube URL and asks to summarize the video, extract transcripts, or get content insights. Supports any YouTube URL format (watch, youtu.be, shorts, embed, live).
+slug: youtube-summarizer-user-9e3b7930
+displayName: YouTube Summarizer
+version: 1.0.0
+summary: 下载 YouTube 字幕并生成结构化总结（核心观点/金句/亮点），默认中文输出，支持多语言
+license: MIT
+description: Download YouTube video transcripts and generate structured summaries with key viewpoints, notable quotes, and topic analysis. Use when the user shares a YouTube URL and asks to summarize the video, extract transcripts, or get content insights. Supports any YouTube URL format (watch, youtu.be, shorts, embed, live).
 allowed-tools: Bash(python3:*), Bash(pip3:*), Bash(yt-dlp:*)
 ---
 
