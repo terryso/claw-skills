@@ -97,6 +97,28 @@ Download YouTube video transcripts and generate structured summaries with key vi
 
 ---
 
+### akshare-stock
+
+基于 AkShare 的 A股量化数据分析工具，获取实时行情、历史K线、财务数据、资金流向、龙虎榜、融资融券等数据。
+
+**功能特性：**
+- 实时行情查询（全市场/指定板块）
+- 历史K线数据（日/周/月，支持前复权）
+- 财务报表与主要财务指标
+- 行业板块与概念板块分析
+- 资金流向、龙虎榜、新股IPO、融资融券数据
+- 备选 Baostock 轻量方案
+
+**使用示例：**
+```bash
+# 安装技能后，在 Claude Code 中：
+"查一下贵州茅台最近一个月的K线数据"
+"帮我分析半导体板块今天的资金流向"
+"查询最新的龙虎榜数据"
+```
+
+---
+
 ## Why Skills over MCP Server?
 
 | Feature | Skill | MCP Server |
