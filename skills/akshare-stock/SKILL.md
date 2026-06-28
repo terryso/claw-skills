@@ -2,125 +2,105 @@
 name: akshare-stock
 slug: akshare-stock-cn
 displayName: A股量化数据分析
-version: 1.0.0
-summary: 基于 AkShare 获取A股实时行情、历史K线、财务数据、资金流向、龙虎榜、融资融券等数据
+version: 1.1.0
+summary: 基于 AkShare 获取A股实时行情、历史K线、财务数据、资金流向、龙虎榜、融资融券等数据，封装为可执行 CLI 脚本
 license: MIT
-description: A股量化数据分析工具，基于AkShare库获取A股行情、财务数据、板块信息等。用于回答关于A股股票查询、行情数据、财务分析、选股等问题。
+description: A股量化数据分析工具，基于AkShare库获取A股行情、财务数据、板块信息等。提供可执行 CLI 脚本，内置重试机制和错误处理。用于回答关于A股股票查询、行情数据、财务分析、选股等问题。
 allowed-tools: Bash(python3:*), Bash(pip3:*)
 ---
 
-# A股量化 - AkShare 数据接口
+# A股量化数据分析（AkShare）
+
+基于 AkShare 封装的可执行 CLI 工具，内置重试机制、错误处理和 JSON/表格双格式输出。
 
 ## 环境准备
-
-安装依赖：
 
 ```bash
 pip install akshare
 ```
 
-## 支持的功能
+## 使用方式
 
-### 1. 实时行情查询
+所有查询通过 CLI 脚本完成，`SKILL_DIR` 为本 SKILL.md 所在目录：
 
-```python
-import akshare as ak
-
-# 全市场个股实时行情
-ak.stock_zh_a_spot_em()
-
-# 指定板块实时行情
-ak.stock_zh_a_spot_em(symbol="北证A股")
+```bash
+python3 SKILL_DIR/scripts/akshare_cli.py <子命令> [参数]
 ```
 
-### 2. 历史K线数据
+默认输出 JSON，加 `--format table` 输出表格。
 
-```python
-import akshare as ak
+### 实时行情
 
-# 日K线（前复权）
-ak.stock_zh_a_hist(symbol="000001", period="daily", start_date="20240101", end_date="20241231", adjust="qfq")
+```bash
+# 全市场实时行情
+python3 SKILL_DIR/scripts/akshare_cli.py spot
 
-# 周K线
-ak.stock_zh_a_hist(symbol="000001", period="weekly", start_date="20240101", end_date="20241231", adjust="qfq")
-
-# 月K线
-ak.stock_zh_a_hist(symbol="000001", period="monthly", start_date="20240101", end_date="20241231", adjust="qfq")
+# 指定板块
+python3 SKILL_DIR/scripts/akshare_cli.py spot --board 北证A股
 ```
 
-### 3. 财务数据
+### 历史K线
 
-```python
-import akshare as ak
+```bash
+# 日K线（默认近一年，前复权）
+python3 SKILL_DIR/scripts/akshare_cli.py kline 000001
 
+# 周K线 + 自定义日期范围
+python3 SKILL_DIR/scripts/akshare_cli.py kline 000001 --period weekly --start 20240101 --end 20241231
+```
+
+### 财务数据
+
+```bash
 # 财务报表摘要
-ak.stock_financial_abstract_ths(symbol="000001", indicator="按报告期")
+python3 SKILL_DIR/scripts/akshare_cli.py finance 000001
 
 # 主要财务指标
-ak.stock_financial_analysis_indicator(symbol="000001")
+python3 SKILL_DIR/scripts/akshare_cli.py indicator 000001
 ```
 
-### 4. 板块/行业分析
+### 板块/行业分析
 
-```python
-import akshare as ak
+```bash
+# 行业板块列表
+python3 SKILL_DIR/scripts/akshare_cli.py board
 
-# 行业板块行情
-ak.stock_board_industry_name_em()
+# 概念板块列表
+python3 SKILL_DIR/scripts/akshare_cli.py board --concept
 
-# 概念板块行情
-ak.stock_board_concept_name_em()
-
-# 板块内个股
-ak.stock_board_industry_cons_em(symbol="半导体")
+# 指定板块内个股
+python3 SKILL_DIR/scripts/akshare_cli.py board --cons 半导体
 ```
 
-### 5. 资金流向
+### 资金流向
 
-```python
-import akshare as ak
-
-# 个股资金流向
-ak.stock_individual_fund_flow(stock="000001", market="sh")
-
-# 大单净流入
-ak.stock_individual_fund_flow(stock="000001", market="sh")
+```bash
+# 个股资金流向（自动识别沪深市场）
+python3 SKILL_DIR/scripts/akshare_cli.py fund 000001
 ```
 
-### 6. 龙虎榜
+### 龙虎榜
 
-```python
-import akshare as ak
-
-# 每日龙虎榜明细
-ak.stock_lhb_detail_em(date="20240930")
-
-# 机构调研
-ak.stock_zlzj_em()
+```bash
+# 指定日期龙虎榜
+python3 SKILL_DIR/scripts/akshare_cli.py lhb --date 20240930
 ```
 
-### 7. 新股/IPO
+### 新股/IPO
 
-```python
-import akshare as ak
-
+```bash
 # 新股申购
-ak.stock_new_ipo_em()
+python3 SKILL_DIR/scripts/akshare_cli.py ipo
 
 # 待上市新股
-ak.stock_new_ipo_start_em()
+python3 SKILL_DIR/scripts/akshare_cli.py ipo --upcoming
 ```
 
-### 8. 融资融券
+### 融资融券
 
-```python
-import akshare as ak
-
-# 融资融券
-ak.stock_margin_sse(symbol="600000")
-
-# 融资融券明细
-ak.stock_rzrq_detail_em(symbol="600000", date="20240930")
+```bash
+# 融资融券数据
+python3 SKILL_DIR/scripts/akshare_cli.py rzrq 600000
 ```
 
 ## 常用股票代码
@@ -133,22 +113,25 @@ ak.stock_rzrq_detail_em(symbol="600000", date="20240930")
 | 比亚迪 | 002594 |
 | 招商银行 | 600036 |
 
+## 脚本特性
+
+- **内置重试机制：** 网络请求自动重试 2 次，指数退避
+- **错误处理：** 异常返回 JSON `{"error": "..."}`，exit code=1
+- **NaN 安全：** 自动处理 pandas NaN 值，避免 JSON 序列化失败
+- **市场自动识别：** 根据股票代码前缀自动判断沪/深市场
+- **双格式输出：** JSON（默认，适合 agent 解析）或 table（适合人类阅读）
+
 ## 备选方案: Baostock
 
-如果 AkShare 安装失败，可使用 baostock（更轻量）：
+AkShare 安装失败时可用 baostock（更轻量）：
 
 ```python
 import baostock as bs
 
-# 登录
 lg = bs.login()
-print(lg.error_msg)
-
-# 获取历史K线
 rs = bs.query_history_k_data_plus('sh.600519',
     'date,code,open,high,low,close,volume',
-    start_date='20250101',
-    end_date='20251231')
+    start_date='20250101', end_date='20251231')
 
 data_list = []
 while rs.next():
@@ -160,6 +143,5 @@ bs.logout()
 ## 注意事项
 
 1. 数据仅供学术研究，不构成投资建议
-2. 接口可能因目标网站变动而失效
-3. 建议添加异常处理和重试机制
-4. 当前环境网络问题可能导致测试失败，请在本地环境测试
+2. AkShare 接口依赖网络抓取，可能因目标网站变动而失效
+3. CLI 脚本已内置重试机制，但极端网络环境下仍可能超时
