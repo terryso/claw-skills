@@ -63,7 +63,7 @@ Analyze the transcript and produce a structured summary. **ALL content must be i
 Template structure (translate every label into the output language):
 
 ```
-## 📺 [localized: "视频总结" / "Video Summary" / etc.]
+## [localized: "视频总结" / "Video Summary"]
 
 **[localized label]:** (title)
 **[localized label]:** (channel)
@@ -77,7 +77,7 @@ Template structure (translate every label into the output language):
 
 ---
 
-### 🎯 [localized: "核心观点" / "Key Viewpoints"]
+### [localized: "核心观点" / "Key Viewpoints"]
 
 | [localized: 话题] | [localized: 观点] |
 |-------|-----------|
@@ -85,17 +85,17 @@ Template structure (translate every label into the output language):
 
 ---
 
-### 🔥 [localized: "金句" / "Notable Quotes"]
+### [localized: "金句" / "Notable Quotes"]
 > "Original language quote" — Speaker
 
 ---
 
-### 📌 [localized: "其他亮点" / "Other Highlights"]
+### [localized: "其他亮点" / "Other Highlights"]
 - ...
 
 ---
 
-### ⚠️ [localized: "注意/偏见" / "Notes / Bias"]
+### [localized: "注意/偏见" / "Notes / Bias"]
 - ...
 ```
 
@@ -107,7 +107,7 @@ The summary language is determined by this priority:
 2. **User does not specify** → **default to 中文 (Chinese)** for ALL content
 3. **Quotes** → always keep in the original spoken language (do not translate quotes)
 4. **Section labels, table headers, metadata fields** → translate into the output language (中文 by default)
-5. **Only emojis and structural format** stay fixed across all languages
+5. **Only structural format** (tables, blockquotes, bold) stays fixed — no emojis
 
 ## Error Handling
 
