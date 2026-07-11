@@ -97,6 +97,33 @@ macOS UI 自动化命令行工具，支持屏幕捕获、窗口控制、元素�
 
 ---
 
+### youtube-subtitle-burner
+
+下载 YouTube 视频到本地，提取 word-level 字幕时间轴，翻译为中文，用 PIL 逐帧烧录字幕到视频画面。
+
+**功能特性：**
+- 下载 YouTube 视频（最高画质，H.264 转码）
+- 从 json3 格式提取精确 word-level 时间轴（不用 VTT，避免字幕延迟）
+- LLM 翻译英文字幕为中文
+- PIL 逐帧渲染字幕（黄底黑字，圆角背景框）
+- 2x 超采样抗锯齿（消除文字边缘锯齿）
+- 流式管道处理（不写临时文件，避免磁盘爆满）
+- 支持横屏和竖屏视频
+
+**字幕参数：**
+- 字体：STHeiti Medium
+- 横屏 56px / 竖屏 58px
+- 黑色文字，黄色半透明背景 (255,220,0,180)
+- 底部居中，每行 ≤15 字
+
+**使用示例：**
+```bash
+# 在 Claude Code 或 OpenClaw 中：
+"下载这个YouTube视频并加上中文字幕: https://youtube.com/watch?v=VIDEO_ID"
+```
+
+---
+
 ## 为什么选择 Skill 而不是 MCP Server？
 
 | 特性 | Skill | MCP Server |
@@ -133,6 +160,12 @@ claw-skills/
         ├── SKILL.md
         └── scripts/
             └── fetch_transcript.py
+    └── youtube-subtitle-burner/
+        ├── SKILL.md
+        └── scripts/
+            ├── parse_json3_subs.py
+            ├── translate_subs.py
+            └── burn_subtitles.py
 ```
 
 ## 贡献

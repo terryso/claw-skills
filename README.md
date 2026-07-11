@@ -119,6 +119,33 @@ Download YouTube video transcripts and generate structured summaries with key vi
 
 ---
 
+### youtube-subtitle-burner
+
+Download YouTube videos to local, extract word-level subtitle timings, translate to Chinese, and burn subtitles into the video frame by frame with PIL.
+
+**Features:**
+- Download YouTube video (best quality, H.264 transcode)
+- Extract accurate word-level timings from json3 format (not VTT, avoids subtitle desync)
+- LLM translation from English to Chinese
+- PIL frame-by-frame subtitle rendering (yellow background, black text, rounded box)
+- 2x supersample antialiasing (smooth text edges, no jaggedness)
+- Streaming pipe processing (no temp files, avoids disk overflow)
+- Supports landscape and portrait videos
+
+**Subtitle Parameters:**
+- Font: STHeiti Medium
+- Landscape 56px / Portrait 58px
+- Black text, yellow semi-transparent background (255,220,0,180)
+- Bottom center, max 15 chars per line
+
+**Usage:**
+```bash
+# In Claude Code or OpenClaw:
+"Download this YouTube video and add Chinese subtitles: https://youtube.com/watch?v=VIDEO_ID"
+```
+
+---
+
 ## Why Skills over MCP Server?
 
 | Feature | Skill | MCP Server |
@@ -151,10 +178,16 @@ claw-skills/
     ├── polyv-live-cli/
     │   ├── SKILL.md
     │   └── references/
-    └── youtube-summarizer/
+    ├── youtube-summarizer/
+    │   ├── SKILL.md
+    │   └── scripts/
+    │       └── fetch_transcript.py
+    └── youtube-subtitle-burner/
         ├── SKILL.md
         └── scripts/
-            └── fetch_transcript.py
+            ├── parse_json3_subs.py
+            ├── translate_subs.py
+            └── burn_subtitles.py
 ```
 
 ## Contributing
