@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# ///
 """
 Translate subtitle segments from English to Chinese using an LLM.
 
@@ -8,10 +11,10 @@ segments with 'text_zh' field added.
 
 Usage:
     # Use with an LLM API (requires OPENAI_API_KEY or similar)
-    python3 translate_subs.py INPUT_segments.json OUTPUT_translated.json
+    uv run translate_subs.py INPUT_segments.json OUTPUT_translated.json
 
     # Just format for manual translation (prints batches)
-    python3 translate_subs.py INPUT_segments.json --print-only
+    uv run translate_subs.py INPUT_segments.json --print-only
 
 Translation rules (baked into the LLM prompt):
     - Concise translations suitable for video subtitles (≤20 Chinese chars per segment)

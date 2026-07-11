@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# ///
 """
 Parse YouTube json3 auto-subtitles into sentence-level segments with accurate word-level timings.
 
 Usage:
-    python3 parse_json3_subs.py INPUT.json3 OUTPUT.json
+    uv run parse_json3_subs.py INPUT.json3 OUTPUT.json
 
 Input: YouTube json3 subtitle file (downloaded with `yt-dlp --write-auto-subs --sub-format json3`)
 Output: JSON array of {"start": float, "end": float, "text_zh_src": "English sentence"}

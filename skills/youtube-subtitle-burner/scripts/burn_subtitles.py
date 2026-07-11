@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#     "pillow",
+# ]
+# ///
 """
 Burn translated subtitles into video with PIL frame-by-frame rendering.
 Supports 2x supersample antialiasing for smooth text edges.
@@ -6,19 +12,19 @@ Uses streaming pipe (no temp files) to avoid disk space issues.
 
 Usage:
     # Full video
-    python3 burn_subtitles.py --video input.mp4 --subs subs.json --output output.mp4 \
+    uv run burn_subtitles.py --video input.mp4 --subs subs.json --output output.mp4 \
         --font-size 56 --supersample 2
 
     # Preview (first N seconds)
-    python3 burn_subtitles.py --video input.mp4 --subs subs.json --output preview.mp4 \
+    uv run burn_subtitles.py --video input.mp4 --subs subs.json --output preview.mp4 \
         --font-size 56 --supersample 2 --preview 15
 
 Subtitle JSON format:
     [{"start": 0.00, "end": 3.26, "text_zh": "中文字幕"}, ...]
 
 Requirements:
-    - ffmpeg/ffprobe installed
-    - Pillow installed (pip3 install Pillow)
+    - ffmpeg/ffprobe installed (brew install ffmpeg)
+    - uv installed (curl -LsSf https://astral.sh/uv/install.sh | sh)
     - macOS font: /System/Library/Fonts/STHeiti Medium.ttc
 """
 import argparse

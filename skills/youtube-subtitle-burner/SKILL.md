@@ -2,11 +2,11 @@
 name: youtube-subtitle-burner
 slug: youtube-subtitle-burner
 displayName: YouTube 视频字幕烧录器
-version: 1.0.0
+version: 1.1.0
 summary: 下载 YouTube 视频，转录中文字幕并烧录到视频画面，支持抗锯齿渲染
 license: MIT
 description: 下载 YouTube 视频到本地，提取 word-level 时间轴，翻译为中文，用 PIL 逐帧烧录字幕到视频画面。支持 2x 超采样抗锯齿消除文字锯齿。适用于横屏和竖屏视频。最终输出带中文字幕的 H.264 MP4 文件，可直接上传到国内平台。
-allowed-tools: Bash(python3:*), Bash(pip3:*), Bash(yt-dlp:*), Bash(ffmpeg:*), Bash(ffprobe:*)
+allowed-tools: Bash(uv:*), Bash(yt-dlp:*), Bash(ffmpeg:*), Bash(ffprobe:*)
 ---
 
 # YouTube 视频字幕烧录器
@@ -21,9 +21,11 @@ allowed-tools: Bash(python3:*), Bash(pip3:*), Bash(yt-dlp:*), Bash(ffmpeg:*), Ba
 # macOS
 brew install ffmpeg yt-dlp
 
-# Python 包
-pip3 install Pillow
+# uv（Python 环境管理，自动处理依赖）
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
+
+Python 脚本使用 PEP 723 内联依赖声明（`# /// script`），`uv run` 会自动创建虚拟环境并安装依赖（如 Pillow），用户无需手动管理 Python 环境。
 
 ### 代理设置（中国大陆）
 
@@ -77,7 +79,7 @@ yt-dlp --skip-download \
 然后运行解析脚本，将 json3 的 word-level 时间轴提取为句子段落：
 
 ```bash
-python3 SKILL_DIR/scripts/parse_json3_subs.py \
+uv run SKILL_DIR/scripts/parse_json3_subs.py \
   INPUT.json3 \
   OUTPUT_segments.json
 ```
@@ -99,7 +101,7 @@ python3 SKILL_DIR/scripts/parse_json3_subs.py \
 - 输出在每段添加 `text_zh` 字段
 
 ```bash
-python3 SKILL_DIR/scripts/translate_subs.py \
+uv run SKILL_DIR/scripts/translate_subs.py \
   INPUT_segments.json \
   OUTPUT_translated.json
 ```
@@ -134,7 +136,7 @@ python3 SKILL_DIR/scripts/translate_subs.py \
 
 ```bash
 # 烧录字幕（含音频，流式管道不写临时文件）
-python3 SKILL_DIR/scripts/burn_subtitles.py \
+uv run SKILL_DIR/scripts/burn_subtitles.py \
   --video INPUT_h264.mp4 \
   --subs INPUT_translated.json \
   --output OUTPUT_burned.mp4 \
@@ -156,7 +158,7 @@ ffmpeg 解码 → Python PIL 逐帧渲染字幕 → ffmpeg 编码
 烧录完整视频前，先做 10-15 秒预览让用户确认字幕效果：
 
 ```bash
-python3 SKILL_DIR/scripts/burn_subtitles.py \
+uv run SKILL_DIR/scripts/burn_subtitles.py \
   --video INPUT_h264.mp4 \
   --subs INPUT_translated.json \
   --output /tmp/preview.mp4 \
@@ -178,18 +180,18 @@ yt-dlp --skip-download --write-auto-subs --sub-langs en \
   --sub-format json3 -o "VIDEO_json3.%(ext)s" "URL"
 
 # 3. 解析时间轴
-python3 SKILL_DIR/scripts/parse_json3_subs.py VIDEO_json3.en.json3 VIDEO_segments.json
+uv run SKILL_DIR/scripts/parse_json3_subs.py VIDEO_json3.en.json3 VIDEO_segments.json
 
 # 4. 翻译（用 LLM 翻译 text_zh_src → text_zh）
 # ... agent 内联翻译或用 translate_subs.py ...
 
 # 5. 预览（15秒）
-python3 SKILL_DIR/scripts/burn_subtitles.py \
+uv run SKILL_DIR/scripts/burn_subtitles.py \
   --video VIDEO_h264.mp4 --subs VIDEO_translated.json \
   --output /tmp/preview.mp4 --font-size 56 --supersample 2 --preview 15
 
 # 6. 烧录完整视频
-python3 SKILL_DIR/scripts/burn_subtitles.py \
+uv run SKILL_DIR/scripts/burn_subtitles.py \
   --video VIDEO_h264.mp4 --subs VIDEO_translated.json \
   --output VIDEO_burned.mp4 --font-size 56 --supersample 2
 ```
