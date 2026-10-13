@@ -146,6 +146,27 @@ Download YouTube videos to local, extract word-level subtitle timings, translate
 
 ---
 
+### explainer-video
+
+Turn an article or post into a 60-second code-rendered explainer video: a single self-contained HTML timeline rendered frame-by-frame with headless Chromium and assembled with ffmpeg.
+
+**Features:**
+- Deterministic rendering: every frame is a pure function of time (`seekTo`/`seek`), no wall-clock playback
+- Spring physics with slight overshoot; seam grammar (vector-matched cuts, cross-dissolves banned, oversized cursor, waterfall text entry)
+- Beat-grid analysis (numpy): cuts on downbeats, hits on beats, zero dead time
+- 60fps + real motion blur (subframe capture + ffmpeg tmix)
+- Chinese TTS narration, CC music bed with ducking, beat-synced UI sound effects
+- Loudness-normalized to -14 LUFS; SRT sidecar (subtitles never burned in)
+- 16:9 (1280x720) and 9:16 (720x1280) layouts
+
+**Usage:**
+```bash
+# In Claude Code or OpenClaw:
+"Turn this blog post into a 60-second explainer video: https://example.com/post"
+```
+
+---
+
 ## Why Skills over MCP Server?
 
 | Feature | Skill | MCP Server |
@@ -188,6 +209,17 @@ claw-skills/
             ├── parse_json3_subs.py
             ├── translate_subs.py
             └── burn_subtitles.py
+    └── explainer-video/
+        ├── SKILL.md
+        ├── bin/
+        │   ├── beat_grid.py
+        │   └── render_frames.py
+        └── references/
+            ├── render-pipeline.md
+            ├── beat-grid.md
+            ├── audio-mix.md
+            ├── seam-grammar.md
+            └── qa-checklist.md
 ```
 
 ## Contributing

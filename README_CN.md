@@ -124,6 +124,27 @@ macOS UI 自动化命令行工具，支持屏幕捕获、窗口控制、元素�
 
 ---
 
+### explainer-video
+
+把文章或帖子变成 60 秒代码渲染讲解视频：单个自包含 HTML 时间轴，用无头 Chromium 逐帧渲染，再用 ffmpeg 合成。
+
+**功能特性：**
+- 确定性渲染：每一帧都是时间的纯函数（`seekTo`/`seek`），不依赖墙钟播放
+- 弹簧物理（带轻微过冲）；接缝语法（向量匹配硬切、禁用交叉溶解、超大光标、waterfall 文字入场）
+- 节拍网格分析（numpy）：切点卡重拍、事件卡节拍、零死时间
+- 60fps + 真动态模糊（子帧捕获 + ffmpeg tmix）
+- 中文 TTS 旁白、CC 音乐床（旁白下自动闪避）、节拍 UI 音效
+- 响度标准化 -14 LUFS；SRT sidecar（长字幕不烧录进画面）
+- 支持 16:9（1280x720）与 9:16（720x1280）
+
+**使用示例：**
+```bash
+# 在 Claude Code 或 OpenClaw 中：
+"把这篇博客文章做成 60 秒讲解视频：https://example.com/post"
+```
+
+---
+
 ## 为什么选择 Skill 而不是 MCP Server？
 
 | 特性 | Skill | MCP Server |
@@ -166,6 +187,17 @@ claw-skills/
             ├── parse_json3_subs.py
             ├── translate_subs.py
             └── burn_subtitles.py
+    └── explainer-video/
+        ├── SKILL.md
+        ├── bin/
+        │   ├── beat_grid.py
+        │   └── render_frames.py
+        └── references/
+            ├── render-pipeline.md
+            ├── beat-grid.md
+            ├── audio-mix.md
+            ├── seam-grammar.md
+            └── qa-checklist.md
 ```
 
 ## 贡献
