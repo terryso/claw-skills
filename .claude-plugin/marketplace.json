@@ -13,7 +13,20 @@
       "description": "Skills for macOS automation (peekaboo-cli), Polyv live streaming (polyv-live-cli), and YouTube video summarization (youtube-summarizer)",
       "homepage": "https://github.com/terryso/claw-skills",
       "license": "MIT",
-      "keywords": ["claude-code", "openclaw", "skills", "automation", "macos", "peekaboo", "polyv", "youtube", "summarizer"]
+      "keywords": [
+        "claude-code",
+        "openclaw",
+        "skills",
+        "automation",
+        "macos",
+        "peekaboo",
+        "polyv",
+        "youtube",
+        "summarizer",
+        "wechat",
+        "channels",
+        "视频号"
+      ]
     }
   ]
 }

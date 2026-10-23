@@ -143,6 +143,25 @@ macOS UI 自动化命令行工具，支持屏幕捕获、窗口控制、元素�
 "把这篇博客文章做成 60 秒讲解视频：https://example.com/post"
 ```
 
+### wechat-channels-video
+
+用 ego-browser 自动化在微信视频号助手（channels.weixin.qq.com）发布视频：上传视频、填描述/话题/短标题/位置、上传 3:4 封面、声明原创、关联活动，保存为草稿。发表需人工扫码。
+
+**功能特性：**
+- 驱动已登录的视频号助手网页控制台（自动处理 wujie 微前端 shadow DOM）
+- 通过本地 CORS 服务 + 隐藏文件 input 注入 DataTransfer 完成视频上传
+- `waitForFileChooser` 拦截原生文件对话框上传 3:4 封面（服务端失败自动重试）
+- 短标题符号/长度白名单处理；位置通过截图引导弹层点击强制设为不显示
+- 原创声明协议弹层自动确认；活动关联通过弹层内搜索（native setter + input 事件）
+- 检查点保存 + 草稿箱落盘验证；内置 11 期实际发布沉淀的避坑清单
+
+**使用示例：**
+```bash
+# 安装技能后，在 Claude Code 中：
+"把 aipcast/067 发布到视频号"
+"用 ego-browser 把这期视频发到视频号助手，保存为草稿"
+```
+
 ---
 
 ## 为什么选择 Skill 而不是 MCP Server？
@@ -181,12 +200,14 @@ claw-skills/
         ├── SKILL.md
         └── scripts/
             └── fetch_transcript.py
-    └── youtube-subtitle-burner/
-        ├── SKILL.md
-        └── scripts/
-            ├── parse_json3_subs.py
-            ├── translate_subs.py
-            └── burn_subtitles.py
+    ├── youtube-subtitle-burner/
+    │   ├── SKILL.md
+    │   └── scripts/
+    │       ├── parse_json3_subs.py
+    │       ├── translate_subs.py
+    │       └── burn_subtitles.py
+    └── wechat-channels-video/
+        └── SKILL.md
     └── explainer-video/
         ├── SKILL.md
         ├── bin/

@@ -165,6 +165,25 @@ Turn an article or post into a 60-second code-rendered explainer video: a single
 "Turn this blog post into a 60-second explainer video: https://example.com/post"
 ```
 
+### wechat-channels-video
+
+Publish videos to WeChat Channels (视频号助手) with ego-browser automation: upload the video, fill description/hashtags/short title/location, upload the 3:4 cover, declare originality, associate campaign activities, and save as a draft. Final publish requires a human QR-code scan.
+
+**Features:**
+- Drives the logged-in WeChat Channels web console (wujie micro-frontend shadow DOM handled)
+- Uploads via hidden file input + DataTransfer injection through a local CORS server
+- `waitForFileChooser` intercepts the native file dialog to upload the 3:4 cover (retry on server-side failure)
+- Short-title symbol/length whitelist handling; location forced to hidden via screenshot-guided popup clicks
+- Originality declaration with agreement dialog; campaign activity association via in-popup search
+- Checkpoint saves + draft-box verification; battle-tested pitfall list from 11 published episodes
+
+**Usage:**
+```bash
+# In Claude Code with skill installed:
+"把 aipcast/067 发布到视频号"
+"用 ego-browser 把这期视频发到视频号助手，保存为草稿"
+```
+
 ---
 
 ## Why Skills over MCP Server?
@@ -209,17 +228,23 @@ claw-skills/
             ├── parse_json3_subs.py
             ├── translate_subs.py
             └── burn_subtitles.py
-    └── explainer-video/
-        ├── SKILL.md
-        ├── bin/
-        │   ├── beat_grid.py
-        │   └── render_frames.py
-        └── references/
-            ├── render-pipeline.md
-            ├── beat-grid.md
-            ├── audio-mix.md
-            ├── seam-grammar.md
-            └── qa-checklist.md
+    ├── akshare-stock/
+    │   ├── SKILL.md
+    │   └── scripts/
+    │       └── akshare_cli.py
+    ├── explainer-video/
+    │   ├── SKILL.md
+    │   ├── bin/
+    │   │   ├── beat_grid.py
+    │   │   └── render_frames.py
+    │   └── references/
+    │       ├── render-pipeline.md
+    │       ├── beat-grid.md
+    │       ├── audio-mix.md
+    │       ├── seam-grammar.md
+    │       └── qa-checklist.md
+    └── wechat-channels-video/
+        └── SKILL.md
 ```
 
 ## Contributing
