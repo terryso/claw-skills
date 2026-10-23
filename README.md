@@ -175,7 +175,7 @@ Publish videos to WeChat Channels (视频号助手) with ego-browser automation:
 - `waitForFileChooser` intercepts the native file dialog to upload the 3:4 cover (retry on server-side failure)
 - Short-title symbol/length whitelist handling; location forced to hidden via screenshot-guided popup clicks
 - Originality declaration with agreement dialog; campaign activity association via in-popup search
-- Checkpoint saves + draft-box verification; battle-tested pitfall list from 11 published episodes
+- Checkpoint saves + draft-box verification; battle-tested pitfall list from real publishing runs
 
 **Usage:**
 ```bash
