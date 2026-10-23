@@ -2,7 +2,7 @@
 name: wechat-channels-video
 slug: wechat-channels-video
 displayName: 微信视频号发布
-version: 1.1.1
+version: 1.1.2
 summary: 用 ego-browser 在微信视频号助手发布视频：上传、填表、封面、声明原创/活动（可选），保存为草稿
 license: MIT
 description: 用 ego-browser 在 channels.weixin.qq.com 视频号助手发布任意视频：上传视频、填描述/短标题/话题/位置/封面（waitForFileChooser），可选声明原创与关联活动，保存为草稿。默认终点是「保存草稿」——发表需扫码，留给人完成。调用方自行提供视频路径与文案；内置实战避坑清单。
@@ -10,11 +10,12 @@ description: 用 ego-browser 在 channels.weixin.qq.com 视频号助手发布任
 
 # 微信视频号发视频（ego-browser）
 
-用 ego-browser（Ego Lite Chromium）在 channels.weixin.qq.com 视频号助手完成视频发布，终点为**保存草稿**。不点「发表」——那是扫码人工环节，结束前 `handOff()` 把浏览器停在草稿箱交给用户。
+用 ego-browser（Ego Lite Chromium，**目前仅 macOS**）在 channels.weixin.qq.com 视频号助手完成视频发布，终点为**保存草稿**。不点「发表」——那是扫码人工环节，结束前 `handOff()` 把浏览器停在草稿箱交给用户。
 
 > 2026-09 起本 skill 从腾讯 BrowserSkill（bsk CLI 驱动 Chrome Agent Window）整体迁移到 ego-browser。竖版大文件上传 → 填表 → 草稿落盘已实测通过。  
 > **1.1.0**：去掉栏目专用目录硬编码；改为调用方传入输入；端口探测与封面格式说明通用化。  
-> **1.1.1**：修本地文件服务环境变量示例；端口用变量；补封面推荐顺序与展示位置说明；收紧本地服务响应路径。
+> **1.1.1**：修本地文件服务环境变量示例；端口用变量；补封面推荐顺序与展示位置说明；收紧本地服务响应路径。  
+> **1.1.2**：注明 Ego Lite / ego-browser 目前仅 macOS。
 
 ## 调用方必须提供的输入
 
@@ -81,6 +82,7 @@ EOF
 
 ## 前置条件
 
+- **平台：目前仅 macOS。** Ego Lite（ego-browser）现只有 Mac 版；Windows / Linux 上不要按本 skill 硬跑。
 - ego-browser 已装（`ego-browser --version`）。
 - 上表输入已确认；视频文件在本机磁盘。
 - 视频号助手已登录。未登录：goto https://channels.weixin.qq.com 后 `await task.handOff()`，请用户在可见浏览器窗口扫码，确认账号无误后等用户回话，`taskSpace()` 接着干。**登录页「加载失败，点击重试」是红鲱鱼**：那是「微信快捷登录」探本地微信客户端（`localhost.weixin.qq.com:13015` 等）失败，二维码本身在跨域 iframe 里、点重试救不了。注意升级 ego lite（如 Chromium 大版本更新）后登录态可能被刷新，**开工先看 URL 是否跳到 login.html**。
