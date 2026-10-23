@@ -2,7 +2,7 @@
 name: wechat-channels-video
 slug: wechat-channels-video
 displayName: 微信视频号发布
-version: 1.1.0
+version: 1.1.1
 summary: 用 ego-browser 在微信视频号助手发布视频：上传、填表、封面、声明原创/活动（可选），保存为草稿
 license: MIT
 description: 用 ego-browser 在 channels.weixin.qq.com 视频号助手发布任意视频：上传视频、填描述/短标题/话题/位置/封面（waitForFileChooser），可选声明原创与关联活动，保存为草稿。默认终点是「保存草稿」——发表需扫码，留给人完成。调用方自行提供视频路径与文案；内置实战避坑清单。
@@ -13,7 +13,8 @@ description: 用 ego-browser 在 channels.weixin.qq.com 视频号助手发布任
 用 ego-browser（Ego Lite Chromium）在 channels.weixin.qq.com 视频号助手完成视频发布，终点为**保存草稿**。不点「发表」——那是扫码人工环节，结束前 `handOff()` 把浏览器停在草稿箱交给用户。
 
 > 2026-09 起本 skill 从腾讯 BrowserSkill（bsk CLI 驱动 Chrome Agent Window）整体迁移到 ego-browser。竖版大文件上传 → 填表 → 草稿落盘已实测通过。  
-> **1.1.0**：去掉栏目专用目录硬编码；改为调用方传入输入；端口探测与封面格式说明通用化。
+> **1.1.0**：去掉栏目专用目录硬编码；改为调用方传入输入；端口探测与封面格式说明通用化。  
+> **1.1.1**：修本地文件服务环境变量示例；端口用变量；补封面推荐顺序与展示位置说明；收紧本地服务响应路径。
 
 ## 调用方必须提供的输入
 
@@ -86,6 +87,8 @@ EOF
 
 ## 流程
 
+**推荐顺序**：① 进发表页 → ② 上传视频 → ③ 立刻存草稿检查点 → ④ 填描述/短标题/位置（及可选原创/活动）→ ⑤ 再存草稿并回草稿箱确认 → ⑥ **有封面再**从草稿箱点编辑补封面并保存；无封面则跳过。不要在首轮编辑器里卡死封面上传。描述字数、视频时长/体积以助手页面红字为准；竖版常见 1080×1920，横版也可传，以页面接受为准。
+
 ### 0. 路由到发表页（坑：直接 URL 白屏）
 
 视频号助手是 **wujie 微前端**：所有表单 DOM 都在 `document.querySelector('wujie-app').shadowRoot` 里，外层 document 查询一律为空。创作面板是懒加载的，**直接 goto /platform/post/create 会白屏**。必须走 UI 路径：
@@ -115,26 +118,40 @@ const state = await page.evaluate(() => {
 
 文件大（几十到上百 MB）进不了 base64，起本地服务让页面自己 fetch。
 
-**端口**：默认试 `18765`；若已被占用则递增探测（如 18766、18767…），把实际端口写入后续 `fetch` URL。开工前可先查占用；收尾必须 kill 掉该进程，否则挡下次。
+**端口**：从 `18765` 起探测；占用则 +1，直到可 `listen`。把选中的端口记为 `actualPort`，后续 `fetch` 与 cleanup 都用它。用完必须 kill，否则挡下次。服务只绑 `127.0.0.1`，只响应 `GET /video.mp4`（其它路径 404）；用完即杀，勿把视频目录暴露给其它本机进程以外的用途。
 
 ```bash
-# 后台运行；PORT 与 VIDEO 换成实际值
-PORT=18765
+# 环境变量必须写在同一行传给 node（单独 PORT= 不会进 -e 子进程）
 VIDEO="<视频绝对路径>"
-node -e '
+# 简易探测：从 18765 起找空闲端口
+actualPort=
+for p in $(seq 18765 18780); do
+  if ! lsof -iTCP:"$p" -sTCP:LISTEN >/dev/null 2>&1; then actualPort=$p; break; fi
+done
+[ -n "$actualPort" ] || { echo "no free port"; exit 1; }
+echo "using port $actualPort"
+
+VIDEO="$VIDEO" PORT="$actualPort" node -e '
 const http = require("http"); const fs = require("fs");
 const file = process.env.VIDEO;
 const port = Number(process.env.PORT);
+if (!file || !fs.existsSync(file)) throw new Error("VIDEO missing: " + file);
 http.createServer((req, res) => {
-  res.writeHead(200, {"Access-Control-Allow-Origin":"*","Content-Type":"video/mp4","Content-Length": fs.statSync(file).size});
+  if (req.method !== "GET" || (req.url !== "/video.mp4" && req.url !== "/")) {
+    res.writeHead(404); return res.end();
+  }
+  const st = fs.statSync(file);
+  res.writeHead(200, {"Access-Control-Allow-Origin":"*","Content-Type":"video/mp4","Content-Length": st.size});
   fs.createReadStream(file).pipe(res);
 }).listen(port,"127.0.0.1",() => console.log("serving :"+port));
-'
+' &
+SERVER_PID=$!
 ```
 
 https 页面 fetch `http://127.0.0.1` 不算 mixed content（localhost 是可信来源）。上传 input 是**隐藏**的 `input[type=file][accept*="video"]`，DataTransfer 注入有效（视频上传组件没做 isTrusted 加固——封面组件做了，见「封面」节）：
 
 ```js
+const actualPort = <上面选出的端口>; // 不要写死 18765
 const r = await page.evaluate(async (p) => {
   const root = document.querySelector('wujie-app').shadowRoot;
   const input = root.querySelector('input[type=file][accept*="video"]');
@@ -145,7 +162,7 @@ const r = await page.evaluate(async (p) => {
   input.dispatchEvent(new Event('input', { bubbles: true }));
   input.dispatchEvent(new Event('change', { bubbles: true }));
   return 'injected ' + dt.files[0].size;
-}, { port: 18765 });
+}, { port: actualPort });
 ```
 
 **验证**：轮询 wujie inner text，出现「转发/赞/评论」预览统计卡、进度百分比停在 100% 不再变化即完成。ego-browser 没有 bsk network，而 `performance.getEntriesByType('resource')` **抓不到这次上传 POST**——DOM 状态是唯一可靠信号。上传期间不要开始填表（布局会位移）。
@@ -207,7 +224,9 @@ const v = await page.evaluate((p) => {
 
 ### 4. 位置（默认带城市，改「不显示位置」）
 
-默认建议隐藏位置。`element.click()` 会让弹层开开关关不渲染；`page.click('text=…')` 又被 wujie 拦截报 “intercepts pointer events”。稳妥路径：
+默认建议隐藏位置（`hideLocation: true`）。若调用方要展示位置：同样用坐标打开位置弹层 → 在「搜索附近位置」用 **native setter + input 事件**写入地名 → 点选结果 → **回读字段文案验证**（与隐藏位置同一套验证纪律）。
+
+`element.click()` 会让弹层开开关关不渲染；`page.click('text=…')` 又被 wujie 拦截报 “intercepts pointer events”。隐藏位置的稳妥路径：
 
 1. 先截图定位「位置」行下拉框坐标（表单右列），`page.mouse.click(x, y)` 点开。
 2. `waitForTimeout(900)` 后 `page.snapshot()`——弹层里应出现「搜索附近位置」输入框和「不显示位置」。
@@ -272,6 +291,8 @@ const r = await page.evaluate((p) => {
 
 ## 封面：用 waitForFileChooser 拦截原生选文件
 
+**时机**：优先在草稿已落盘后，从草稿箱「编辑」进入再传封面（见上方推荐顺序）。无 `coverPath` 则整节跳过。
+
 封面组件做了 isTrusted 加固，以下路径全部实测失败且**大多静默无错**：`input.files` 赋值 + change 事件（含 composed）、直调事件监听、合成 drag/drop 带 DataTransfer、`page.setInputFiles`、可信点击后 AppleScript 驱动 OS 文件框（中文输入法吃路径 + cmd+shift+G 误开浏览器查找栏）。
 
 **ego-browser 的 `page.waitForFileChooser()` 是唯一可行路径**（多数 CDP 封装没有等价能力）：它走 CDP 拦截**浏览器原生文件选择框**，文件由浏览器自己写入、事件全部原生可信；且不弹 OS 文件框。
@@ -293,7 +314,7 @@ await chooser.setFiles("<coverPath 绝对路径>");   // PNG/JPG 均可；大图
 
 ## 清理
 
-- kill 掉本地文件服务进程（记下实际端口；占用会挡下次）。
+- `kill $SERVER_PID`（或按 `actualPort` 查进程）关掉本地文件服务；占用会挡下次。
 - 结尾 `task.handOff()` 把浏览器停在草稿箱（用户要补封面/发表）；确认彻底结束再 `task.finish({ keep: [] })`。
 - /tmp 的临时脚本是垃圾，可留可删。
 
@@ -317,3 +338,5 @@ await chooser.setFiles("<coverPath 绝对路径>");   // PNG/JPG 均可；大图
 16. **发表是人工终点** → 只点「保存草稿」，结尾 `handOff()` 停在草稿箱。
 17. **登录页「加载失败」是红鲱鱼** → 本地微信客户端探活失败而已；handOff 请人扫即可，别点「重试」。
 18. **输入由调用方提供** → 不要假设固定栏目目录或固定活动搜索词；没有对口活动就保持「不参与活动」。
+19. **本地文件服务** → `VIDEO=... PORT=... node -e` 必须同行传环境变量；只响应 `/video.mp4`；用 `actualPort` 不要写死。
+20. **封面放草稿之后** → 先文案落盘再补封面；无封面就跳过。
