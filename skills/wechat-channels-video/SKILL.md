@@ -2,7 +2,7 @@
 name: wechat-channels-video
 slug: wechat-channels-video
 displayName: 微信视频号发布
-version: 1.1.2
+version: 1.1.3
 summary: 用 ego-browser 在微信视频号助手发布视频：上传、填表、封面、声明原创/活动（可选），保存为草稿
 license: MIT
 description: 用 ego-browser 在 channels.weixin.qq.com 视频号助手发布任意视频：上传视频、填描述/短标题/话题/位置/封面（waitForFileChooser），可选声明原创与关联活动，保存为草稿。默认终点是「保存草稿」——发表需扫码，留给人完成。调用方自行提供视频路径与文案；内置实战避坑清单。
@@ -15,7 +15,8 @@ description: 用 ego-browser 在 channels.weixin.qq.com 视频号助手发布任
 > 2026-09 起本 skill 从腾讯 BrowserSkill（bsk CLI 驱动 Chrome Agent Window）整体迁移到 ego-browser。竖版大文件上传 → 填表 → 草稿落盘已实测通过。  
 > **1.1.0**：去掉栏目专用目录硬编码；改为调用方传入输入；端口探测与封面格式说明通用化。  
 > **1.1.1**：修本地文件服务环境变量示例；端口用变量；补封面推荐顺序与展示位置说明；收紧本地服务响应路径。  
-> **1.1.2**：注明 Ego Lite / ego-browser 目前仅 macOS。
+> **1.1.2**：注明 Ego Lite / ego-browser 目前仅 macOS。  
+> **1.1.3**：补充视频号助手须在 Ego 内登录；后台约每日需重登，发前先打开确认。
 
 ## 调用方必须提供的输入
 
@@ -85,11 +86,13 @@ EOF
 - **平台：目前仅 macOS。** Ego Lite（ego-browser）现只有 Mac 版；Windows / Linux 上不要按本 skill 硬跑。
 - ego-browser 已装（`ego-browser --version`）。
 - 上表输入已确认；视频文件在本机磁盘。
-- 视频号助手已登录。未登录：goto https://channels.weixin.qq.com 后 `await task.handOff()`，请用户在可见浏览器窗口扫码，确认账号无误后等用户回话，`taskSpace()` 接着干。**登录页「加载失败，点击重试」是红鲱鱼**：那是「微信快捷登录」探本地微信客户端（`localhost.weixin.qq.com:13015` 等）失败，二维码本身在跨域 iframe 里、点重试救不了。注意升级 ego lite（如 Chromium 大版本更新）后登录态可能被刷新，**开工先看 URL 是否跳到 login.html**。
+- **登录（硬前提）**：用户必须先在 **Ego 自己的浏览器空间**里登录过视频号助手（`https://channels.weixin.qq.com`）。Chrome / 系统浏览器里登录过不算——Ego 用独立 profile，登录态不共享。
+- **每日可能掉线**：视频号管理后台大约每天都要重新登录一次。因此**每次发布流程开始前**，先在 Ego 打开助手首页，确认已进入工作台（不是 login.html）。未登录或不确定时：`goto` 助手 → `await task.handOff()`，请用户在可见的 Ego 窗口扫码登录，确认账号无误并回话后再继续自动化。
+- 未登录处理细节：goto https://channels.weixin.qq.com 后 `await task.handOff()`，请用户扫码，确认后 `taskSpace()` 接着干。**登录页「加载失败，点击重试」是红鲱鱼**：那是「微信快捷登录」探本地微信客户端（`localhost.weixin.qq.com:13015` 等）失败，二维码本身在跨域 iframe 里、点重试救不了。升级 Ego Lite（如 Chromium 大版本）也可能清掉登录态，同样先确认 URL。
 
 ## 流程
 
-**推荐顺序**：① 进发表页 → ② 上传视频 → ③ 立刻存草稿检查点 → ④ 填描述/短标题/位置（及可选原创/活动）→ ⑤ 再存草稿并回草稿箱确认 → ⑥ **有封面再**从草稿箱点编辑补封面并保存；无封面则跳过。不要在首轮编辑器里卡死封面上传。描述字数、视频时长/体积以助手页面红字为准；竖版常见 1080×1920，横版也可传，以页面接受为准。
+**推荐顺序**：① **在 Ego 打开助手确认已登录**（见前置条件）→ ② 进发表页 → ③ 上传视频 → ④ 立刻存草稿检查点 → ⑤ 填描述/短标题/位置（及可选原创/活动）→ ⑥ 再存草稿并回草稿箱确认 → ⑦ **有封面再**从草稿箱点编辑补封面并保存；无封面则跳过。不要在首轮编辑器里卡死封面上传。描述字数、视频时长/体积以助手页面红字为准；竖版常见 1080×1920，横版也可传，以页面接受为准。
 
 ### 0. 路由到发表页（坑：直接 URL 白屏）
 
@@ -342,3 +345,4 @@ await chooser.setFiles("<coverPath 绝对路径>");   // PNG/JPG 均可；大图
 18. **输入由调用方提供** → 不要假设固定栏目目录或固定活动搜索词；没有对口活动就保持「不参与活动」。
 19. **本地文件服务** → `VIDEO=... PORT=... node -e` 必须同行传环境变量；只响应 `/video.mp4`；用 `actualPort` 不要写死。
 20. **封面放草稿之后** → 先文案落盘再补封面；无封面就跳过。
+21. **Ego 内登录** → 必须在 Ego profile 登录视频号助手；系统 Chrome 登录无效。后台约每日需重登，发前先打开确认，未登录先 handOff 扫码。
